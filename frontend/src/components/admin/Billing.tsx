@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Button from '../shared/Button'
 
 interface BillingData {
   company_id: number
@@ -111,7 +112,14 @@ const Billing: React.FC = () => {
       <h1>Billing & Commission</h1>
       
       {error && (
-        <div className="alert alert-error">
+        <div style={{
+          color: 'var(--color-status-error)',
+          marginBottom: '20px',
+          padding: 'var(--spacing-md)',
+          backgroundColor: 'var(--color-background-secondary)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--color-status-error)'
+        }}>
           {error}
         </div>
       )}
@@ -141,12 +149,12 @@ const Billing: React.FC = () => {
             />
           </div>
           <div className="filter-actions">
-            <button className="btn btn-primary" onClick={handleFilter}>
+            <Button variant="primary" onClick={handleFilter}>
               Apply Filter
-            </button>
-            <button className="btn btn-secondary" onClick={handleClearFilter}>
+            </Button>
+            <Button variant="secondary" onClick={handleClearFilter}>
               Clear Filter
-            </button>
+            </Button>
           </div>
         </div>
       </div>

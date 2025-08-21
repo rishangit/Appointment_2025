@@ -4,6 +4,8 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import type { RootState } from '../../store'
 import { registerUser, clearError } from '../../store/slices/authSlice'
 import { UserRole } from '../../types'
+import { Button, Input, Select, Alert, Card } from '../shared'
+import { getAvailableRoles } from '../../utils/userRoleUtils'
 
 const Register: React.FC = () => {
   const navigate = useNavigate()
@@ -43,10 +45,12 @@ const Register: React.FC = () => {
   }, [dispatch])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'role' ? value as UserRole : value
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,110 +83,125 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div className="card" style={{ maxWidth: '500px', margin: '50px auto' }}>
-      <h2>Register</h2>
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-      {success && <div style={{ color: 'green', marginBottom: '10px' }}>{success}</div>}
-      
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Full Name:</label>
-          <input
+    <div className="login-container">
+      <Card 
+        className="register-card"
+        title="Create Account"
+        subtitle="Join our appointment management system"
+      >
+        {error && (
+          <Alert type="error" message={error} />
+        )}
+
+        {success && (
+          <Alert type="success" message={success} />
+        )}
+        
+        <form onSubmit={handleSubmit} className="register-form">
+          <Input
             type="text"
-            id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
+            placeholder="Enter your full name"
+            label="Full Name"
             required
+            icon="👤"
+            autoComplete="name"
           />
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
+          <Input
             type="email"
-            id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="Enter your email"
+            label="Email Address"
             required
+            icon="📧"
+            autoComplete="email"
           />
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
+          <Input
             type="password"
-            id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Create a password"
+            label="Password"
             required
+            icon="🔒"
+            autoComplete="new-password"
           />
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="role">Role:</label>
-                     <select
-             id="role"
-             name="role"
-             value={formData.role}
-             onChange={handleChange}
-             required
-           >
-             <option value={UserRole.USER}>User</option>
-             <option value={UserRole.COMPANY}>Company</option>
-           </select>
-        </div>
+          <Select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            options={getAvailableRoles()}
+            label="Account Type"
+            required
+            placeholder="Select account type"
+          />
 
-                 {formData.role === UserRole.COMPANY && (
-          <>
-            <div className="form-group">
-              <label htmlFor="companyName">Company Name:</label>
-              <input
+          {formData.role === UserRole.COMPANY && (
+            <>
+              <Input
                 type="text"
-                id="companyName"
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleChange}
+                placeholder="Enter company name"
+                label="Company Name"
                 required
+                icon="🏢"
               />
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="companyAddress">Company Address:</label>
-              <input
+              <Input
                 type="text"
-                id="companyAddress"
                 name="companyAddress"
                 value={formData.companyAddress}
                 onChange={handleChange}
+                placeholder="Enter company address"
+                label="Company Address"
                 required
+                icon="📍"
               />
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="companyPhone">Company Phone:</label>
-              <input
+              <Input
                 type="tel"
-                id="companyPhone"
                 name="companyPhone"
                 value={formData.companyPhone}
                 onChange={handleChange}
+                placeholder="Enter company phone"
+                label="Company Phone"
                 required
+                icon="📞"
               />
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        <button type="submit" className="btn" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+          <Button 
+            type="submit" 
+            variant="primary"
+            size="lg"
+            loading={loading}
+            fullWidth
+            className="register-button"
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </Button>
+        </form>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
+        <div className="register-footer">
+          <p className="login-link">
+            Already have an account?{' '}
+            <Link to="/login" className="link-primary">
+              Sign in here
+            </Link>
+          </p>
+        </div>
+      </Card>
     </div>
   )
 }

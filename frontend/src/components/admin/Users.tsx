@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react'
+import { Alert, Badge, Card, LoadingSpinner } from '../shared'
+import Button from '../shared/Button'
+import { UserRole, User } from '../../types'
+import { getRoleBadgeVariant, getRoleLabel, canDeleteRole } from '../../utils/userRoleUtils'
 
-interface User {
+interface UserData {
   id: number
   name: string
   email: string
-  role: 'admin' | 'company' | 'user'
+  role: UserRole
   created_at: string
 }
 
 const Users: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -65,24 +69,11 @@ const Users: React.FC = () => {
     }
   }
 
-  const getRoleBadge = (role: string) => {
-    const roleColors = {
-      admin: '#dc3545',
-      company: '#007bff',
-      user: '#28a745'
-    }
-    
+  const getRoleBadge = (role: UserRole) => {
     return (
-      <span style={{
-        backgroundColor: roleColors[role as keyof typeof roleColors],
-        color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: 'bold'
-      }}>
-        {role.toUpperCase()}
-      </span>
+      <Badge variant={getRoleBadgeVariant(role)}>
+        {getRoleLabel(role)}
+      </Badge>
     )
   }
 
@@ -91,7 +82,11 @@ const Users: React.FC = () => {
   }
 
   if (loading) {
-    return <div className="container">Loading users...</div>
+    return (
+      <div className="container">
+        <LoadingSpinner text="Loading users..." />
+      </div>
+    )
   }
 
   return (
@@ -99,48 +94,45 @@ const Users: React.FC = () => {
       <h1>Manage Users</h1>
       
       {error && (
-        <div style={{ color: 'red', marginBottom: '20px', padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>
-          {error}
-        </div>
+        <Alert type="error" message={error} />
       )}
 
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2>All Users ({users.length})</h2>
-        </div>
-
+      <Card 
+        title={`All Users (${users.length})`}
+        subtitle="Manage system users and their roles"
+      >
         {users.length === 0 ? (
           <p>No users found.</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table>
               <thead>
-                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Name</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Email</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Role</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Joined</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Actions</th>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.id} style={{ borderBottom: '1px solid #dee2e6' }}>
-                    <td style={{ padding: '12px' }}>
+                  <tr key={user.id}>
+                    <td>
                       <strong>{user.name}</strong>
                     </td>
-                    <td style={{ padding: '12px' }}>{user.email}</td>
-                    <td style={{ padding: '12px' }}>{getRoleBadge(user.role)}</td>
-                    <td style={{ padding: '12px' }}>{formatDate(user.created_at)}</td>
-                    <td style={{ padding: '12px' }}>
-                      <button
+                    <td>{user.email}</td>
+                    <td>{getRoleBadge(user.role)}</td>
+                    <td>{formatDate(user.created_at)}</td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => deleteUser(user.id)}
-                        className="btn"
-                        style={{ backgroundColor: '#dc3545', fontSize: '12px', padding: '4px 8px' }}
-                        disabled={user.role === 'admin'}
+                        disabled={!canDeleteRole(user.role)}
                       >
                         Delete
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -148,7 +140,7 @@ const Users: React.FC = () => {
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   )
 }

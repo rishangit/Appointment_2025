@@ -16,6 +16,7 @@ interface Service {
   description: string
   price: number
   duration: number
+  status: 'active' | 'archived'
 }
 
 interface SearchableDropdownProps {
@@ -144,7 +145,6 @@ const BookAppointment: React.FC = () => {
       setCompanies(response.data)
       setError('')
     } catch (error) {
-      console.error('Failed to fetch companies:', error)
       setError('Failed to load companies')
     } finally {
       setLoading(false)
@@ -156,7 +156,6 @@ const BookAppointment: React.FC = () => {
       const response = await userAPI.getServices(parseInt(companyId))
       setServices(response.data)
     } catch (error) {
-      console.error('Failed to fetch services:', error)
       setError('Failed to load services')
     }
   }
@@ -208,7 +207,6 @@ const BookAppointment: React.FC = () => {
       })
       setServices([])
     } catch (error: any) {
-      console.error('Failed to book appointment:', error)
       setMessage(error.message || 'Failed to book appointment')
       setMessageType('error')
     }
@@ -221,11 +219,14 @@ const BookAppointment: React.FC = () => {
     value: company.id.toString()
   }))
 
-  const serviceOptions = services.map(service => ({
-    id: service.id,
-    label: `${service.name} - $${service.price}`,
-    value: service.id.toString()
-  }))
+  // Filter out archived services - users should only see active services
+  const serviceOptions = services
+    .filter(service => service.status === 'active') // Only show active services
+    .map(service => ({
+      id: service.id,
+      label: `${service.name} - $${service.price}`,
+      value: service.id.toString()
+    }))
 
   if (!user || user.role !== 'user') {
     return (
@@ -289,8 +290,13 @@ const BookAppointment: React.FC = () => {
                 placeholder="Choose a service..."
                 label="Select Service"
                 required
-                disabled={!formData.company_id}
               />
+              
+              {formData.company_id && serviceOptions.length === 0 && (
+                <div className="alert alert-info" style={{ marginTop: '10px' }}>
+                  No active services available for this company. Please contact the company for available services.
+                </div>
+              )}
 
               <div className="form-group">
                 <label htmlFor="appointment_date">Appointment Date *</label>

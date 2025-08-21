@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useAppSelector } from '../../store/hooks'
 import { companyAPI } from '../../utils/api'
+import { AppointmentStatusBadge, Button } from '../shared'
 
 interface Appointment {
   id: number
@@ -11,7 +12,7 @@ interface Appointment {
   appointment_date: string
   appointment_time: string
   notes: string
-  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
+  status: 'pending' | 'scheduled' | 'completed' | 'cancelled'
   created_at: string
 }
 
@@ -21,6 +22,7 @@ interface Service {
   description: string
   price: number
   duration: number
+  status: 'active' | 'archived'
 }
 
 interface CompanyUser {
@@ -136,12 +138,22 @@ const Appointments: React.FC = () => {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error'>('success')
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
   const [formData, setFormData] = useState({
     user_id: '',
     service_id: '',
     appointment_date: '',
     appointment_time: '',
     notes: ''
+  })
+  const [filters, setFilters] = useState({
+    status: '',
+    customerName: '',
+    serviceName: '',
+    startDate: '',
+    endDate: '',
+    minPrice: '',
+    maxPrice: ''
   })
 
   useEffect(() => {
@@ -164,7 +176,6 @@ const Appointments: React.FC = () => {
       setCompanyUsers(usersRes.data)
       setError('')
     } catch (error) {
-      console.error('Failed to fetch data:', error)
       setError('Failed to load appointments data')
     } finally {
       setLoading(false)
@@ -209,13 +220,12 @@ const Appointments: React.FC = () => {
       })
       fetchData() // Refresh the appointments list
     } catch (error: any) {
-      console.error('Failed to create appointment:', error)
       setMessage(error.message || 'Failed to create appointment')
       setMessageType('error')
     }
   }
 
-  const updateAppointmentStatus = async (appointmentId: number, status: 'confirmed' | 'completed' | 'cancelled') => {
+  const updateAppointmentStatus = async (appointmentId: number, status: 'scheduled' | 'completed' | 'cancelled') => {
     try {
       await companyAPI.updateAppointmentStatus(appointmentId, status)
       setAppointments(prev => prev.map(appointment => 
@@ -224,25 +234,13 @@ const Appointments: React.FC = () => {
       setMessage('Appointment status updated successfully!')
       setMessageType('success')
     } catch (error: any) {
-      console.error('Failed to update appointment status:', error)
       setMessage(error.message || 'Failed to update appointment status')
       setMessageType('error')
     }
   }
 
   const getStatusBadge = (status: string) => {
-    const statusColors = {
-      scheduled: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800'
-    }
-    
-    return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
-    )
+    return <AppointmentStatusBadge status={status as any} size="sm" />
   }
 
   // Prepare options for dropdowns
@@ -252,11 +250,74 @@ const Appointments: React.FC = () => {
     value: user.id.toString()
   }))
 
-  const serviceOptions = services.map(service => ({
-    id: service.id,
-    label: `${service.name} - $${service.price}`,
-    value: service.id.toString()
-  }))
+  // Filter out archived services - only show active services for new appointments
+  // This ensures companies can only create appointments for active services
+  const serviceOptions = services
+    .filter(service => service.status === 'active') // Only show active services
+    .map(service => ({
+      id: service.id,
+      label: `${service.name} - $${service.price}`,
+      value: service.id.toString()
+    }))
+
+  // Filter appointments based on current filters
+  const filteredAppointments = appointments.filter(appointment => {
+    // Status filter
+    if (filters.status && appointment.status !== filters.status) {
+      return false
+    }
+
+    // Customer name filter
+    if (filters.customerName && !appointment.user_name.toLowerCase().includes(filters.customerName.toLowerCase())) {
+      return false
+    }
+
+    // Service name filter
+    if (filters.serviceName && !appointment.service_name.toLowerCase().includes(filters.serviceName.toLowerCase())) {
+      return false
+    }
+
+    // Date range filter
+    if (filters.startDate && new Date(appointment.appointment_date) < new Date(filters.startDate)) {
+      return false
+    }
+    if (filters.endDate && new Date(appointment.appointment_date) > new Date(filters.endDate)) {
+      return false
+    }
+
+    // Price range filter
+    if (filters.minPrice && appointment.service_price < parseFloat(filters.minPrice)) {
+      return false
+    }
+    if (filters.maxPrice && appointment.service_price > parseFloat(filters.maxPrice)) {
+      return false
+    }
+
+    return true
+  })
+
+  const handleFilterChange = (name: string, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const clearFilters = () => {
+    setFilters({
+      status: '',
+      customerName: '',
+      serviceName: '',
+      startDate: '',
+      endDate: '',
+      minPrice: '',
+      maxPrice: ''
+    })
+  }
+
+  const getActiveFiltersCount = () => {
+    return Object.values(filters).filter(value => value !== '').length
+  }
 
   if (!user || user.role !== 'company') {
     return (
@@ -301,14 +362,138 @@ const Appointments: React.FC = () => {
 
       <div className="card">
         <div className="card-header">
-          <h2>All Appointments ({appointments.length})</h2>
-          <button 
-            className="btn btn-primary"
-            onClick={() => setShowCreateForm(!showCreateForm)}
-          >
-            {showCreateForm ? 'Cancel' : 'Create Appointment'}
-          </button>
+          <div className="header-content">
+            <div className="header-left">
+              <h2>All Appointments ({filteredAppointments.length} of {appointments.length})</h2>
+              {getActiveFiltersCount() > 0 && (
+                <span className="filter-badge">
+                  {getActiveFiltersCount()} filter{getActiveFiltersCount() !== 1 ? 's' : ''} active
+                </span>
+              )}
+            </div>
+            <div className="header-actions">
+              <Button 
+                variant="secondary"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <span className="filter-icon">🔍</span>
+                Filters {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
+              </Button>
+              <Button 
+                variant="primary"
+                onClick={() => setShowCreateForm(!showCreateForm)}
+              >
+                {showCreateForm ? 'Cancel' : 'Create Appointment'}
+              </Button>
+            </div>
+          </div>
         </div>
+
+        {/* Filters Section */}
+        {showFilters && (
+          <div className="filters-section">
+            <div className="filters-grid">
+              <div className="form-group">
+                <label htmlFor="status-filter">Status</label>
+                <select
+                  id="status-filter"
+                  className="form-input"
+                  value={filters.status}
+                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="customer-filter">Customer Name</label>
+                <input
+                  type="text"
+                  id="customer-filter"
+                  className="form-input"
+                  placeholder="Search by customer name..."
+                  value={filters.customerName}
+                  onChange={(e) => handleFilterChange('customerName', e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="service-filter">Service Name</label>
+                <input
+                  type="text"
+                  id="service-filter"
+                  className="form-input"
+                  placeholder="Search by service name..."
+                  value={filters.serviceName}
+                  onChange={(e) => handleFilterChange('serviceName', e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="start-date-filter">Start Date</label>
+                <input
+                  type="date"
+                  id="start-date-filter"
+                  className="form-input"
+                  value={filters.startDate}
+                  onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="end-date-filter">End Date</label>
+                <input
+                  type="date"
+                  id="end-date-filter"
+                  className="form-input"
+                  value={filters.endDate}
+                  onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="min-price-filter">Min Price</label>
+                <input
+                  type="number"
+                  id="min-price-filter"
+                  className="form-input"
+                  placeholder="Min price..."
+                  value={filters.minPrice}
+                  onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="max-price-filter">Max Price</label>
+                <input
+                  type="number"
+                  id="max-price-filter"
+                  className="form-input"
+                  placeholder="Max price..."
+                  value={filters.maxPrice}
+                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+
+            <div className="filter-actions">
+              <Button 
+                variant="secondary"
+                onClick={clearFilters}
+              >
+                Clear All Filters
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Create Appointment Form */}
         {showCreateForm && (
@@ -373,12 +558,12 @@ const Appointments: React.FC = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="btn btn-primary">
+                <Button type="submit" variant="primary">
                   Create Appointment
-                </button>
-                <button 
+                </Button>
+                <Button 
                   type="button" 
-                  className="btn btn-secondary"
+                  variant="secondary"
                   onClick={() => {
                     setShowCreateForm(false)
                     setFormData({
@@ -391,7 +576,7 @@ const Appointments: React.FC = () => {
                   }}
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -399,9 +584,22 @@ const Appointments: React.FC = () => {
 
         {/* Appointments List */}
         <div className="appointments-list">
-          {appointments.length === 0 ? (
+          {filteredAppointments.length === 0 ? (
             <div className="text-center text-muted">
-              <p>No appointments found.</p>
+              <p>
+                {appointments.length === 0 
+                  ? 'No appointments found.' 
+                  : 'No appointments match the current filters.'
+                }
+              </p>
+              {getActiveFiltersCount() > 0 && (
+                <Button 
+                  variant="outline"
+                  onClick={clearFilters}
+                >
+                  Clear filters to see all appointments
+                </Button>
+              )}
             </div>
           ) : (
             <div className="appointments-table">
@@ -417,7 +615,7 @@ const Appointments: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {appointments.map((appointment) => (
+                  {filteredAppointments.map((appointment) => (
                     <tr key={appointment.id}>
                       <td>
                         <div>
@@ -449,29 +647,32 @@ const Appointments: React.FC = () => {
                       </td>
                       <td>
                         <div className="action-buttons">
-                          {appointment.status === 'scheduled' && (
+                          {appointment.status === 'pending' && (
                             <>
-                              <button
-                                className="btn btn-sm btn-success"
-                                onClick={() => updateAppointmentStatus(appointment.id, 'confirmed')}
+                              <Button
+                                size="sm"
+                                variant="success"
+                                onClick={() => updateAppointmentStatus(appointment.id, 'scheduled')}
                               >
-                                Confirm
-                              </button>
-                              <button
-                                className="btn btn-sm btn-danger"
+                                Accept
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
                                 onClick={() => updateAppointmentStatus(appointment.id, 'cancelled')}
                               >
                                 Cancel
-                              </button>
+                              </Button>
                             </>
                           )}
-                          {appointment.status === 'confirmed' && (
-                            <button
-                              className="btn btn-sm btn-success"
+                          {appointment.status === 'scheduled' && (
+                            <Button
+                              size="sm"
+                              variant="success"
                               onClick={() => updateAppointmentStatus(appointment.id, 'completed')}
                             >
                               Complete
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </td>

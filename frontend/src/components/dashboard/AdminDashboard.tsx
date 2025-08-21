@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
+import Button from '../shared/Button'
 import { DashboardStats } from '../../types'
 import { adminAPI } from '../../utils/api'
 
@@ -27,40 +28,175 @@ const AdminDashboard: React.FC = () => {
         })
       }
     } catch (error) {
-      console.error('Error fetching stats:', error)
+      // Handle error silently
     }
   }
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
+    <div style={{ padding: 'var(--spacing-lg)' }}>
+      <h1 style={{ 
+        color: 'var(--color-text-primary)',
+        fontSize: 'var(--font-fontSize-2xl)',
+        fontWeight: 'var(--font-fontWeight-bold)',
+        marginBottom: 'var(--spacing-xl)',
+        textAlign: 'center'
+      }}>
+        Admin Dashboard
+      </h1>
       
-      <div className="dashboard">
-        <div className="stat-card">
-          <h3>Total Users</h3>
-          <div className="number">{stats.totalUsers}</div>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: 'var(--spacing-lg)',
+        marginBottom: 'var(--spacing-xl)'
+      }}>
+        <div style={{
+          backgroundColor: 'var(--color-background-card)',
+          padding: 'var(--spacing-xl)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border-primary)',
+          boxShadow: 'var(--color-shadow-md)',
+          textAlign: 'center',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+        }}>
+          <h3 style={{ 
+            color: 'var(--color-text-secondary)',
+            fontSize: 'var(--font-fontSize-lg)',
+            fontWeight: 'var(--font-fontWeight-medium)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            Total Users
+          </h3>
+          <div style={{ 
+            fontSize: 'var(--font-fontSize-3xl)',
+            fontWeight: 'var(--font-fontWeight-bold)',
+            color: 'var(--color-primary)'
+          }}>
+            {stats.totalUsers}
+          </div>
         </div>
-        <div className="stat-card">
-          <h3>Total Companies</h3>
-          <div className="number">{stats.totalCompanies}</div>
+        
+        <div style={{
+          backgroundColor: 'var(--color-background-card)',
+          padding: 'var(--spacing-xl)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border-primary)',
+          boxShadow: 'var(--color-shadow-md)',
+          textAlign: 'center',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+        }}>
+          <h3 style={{ 
+            color: 'var(--color-text-secondary)',
+            fontSize: 'var(--font-fontSize-lg)',
+            fontWeight: 'var(--font-fontWeight-medium)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            Total Companies
+          </h3>
+          <div style={{ 
+            fontSize: 'var(--font-fontSize-3xl)',
+            fontWeight: 'var(--font-fontWeight-bold)',
+            color: 'var(--color-secondary)'
+          }}>
+            {stats.totalCompanies}
+          </div>
         </div>
-        <div className="stat-card">
-          <h3>Total Appointments</h3>
-          <div className="number">{stats.totalAppointments}</div>
+        
+        <div style={{
+          backgroundColor: 'var(--color-background-card)',
+          padding: 'var(--spacing-xl)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border-primary)',
+          boxShadow: 'var(--color-shadow-md)',
+          textAlign: 'center',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+        }}>
+          <h3 style={{ 
+            color: 'var(--color-text-secondary)',
+            fontSize: 'var(--font-fontSize-lg)',
+            fontWeight: 'var(--font-fontWeight-medium)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            Total Appointments
+          </h3>
+          <div style={{ 
+            fontSize: 'var(--font-fontSize-3xl)',
+            fontWeight: 'var(--font-fontWeight-bold)',
+            color: 'var(--color-accent)'
+          }}>
+            {stats.totalAppointments}
+          </div>
         </div>
-        <div className="stat-card">
-          <h3>Total Revenue</h3>
-          <div className="number">${stats.totalRevenue}</div>
+        
+        <div style={{
+          backgroundColor: 'var(--color-background-card)',
+          padding: 'var(--spacing-xl)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border-primary)',
+          boxShadow: 'var(--color-shadow-md)',
+          textAlign: 'center',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+        }}>
+          <h3 style={{ 
+            color: 'var(--color-text-secondary)',
+            fontSize: 'var(--font-fontSize-lg)',
+            fontWeight: 'var(--font-fontWeight-medium)',
+            marginBottom: 'var(--spacing-md)'
+          }}>
+            Total Revenue
+          </h3>
+          <div style={{ 
+            fontSize: 'var(--font-fontSize-3xl)',
+            fontWeight: 'var(--font-fontWeight-bold)',
+            color: 'var(--color-status-success)'
+          }}>
+            ${stats.totalRevenue}
+          </div>
         </div>
       </div>
 
-      <div className="card">
-        <h3>Quick Actions</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <Link to="/admin/companies" className="btn">Manage Companies</Link>
-          <Link to="/admin/users" className="btn">Manage Users</Link>
-          <Link to="/admin/appointments" className="btn">View Appointments</Link>
-          <Link to="/admin/billing" className="btn">Billing & Payments</Link>
+      <div style={{
+        backgroundColor: 'var(--color-background-card)',
+        padding: 'var(--spacing-xl)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--color-border-primary)',
+        boxShadow: 'var(--color-shadow-md)'
+      }}>
+        <h3 style={{ 
+          color: 'var(--color-text-primary)',
+          fontSize: 'var(--font-fontSize-xl)',
+          fontWeight: 'var(--font-fontWeight-semibold)',
+          marginBottom: 'var(--spacing-lg)',
+          textAlign: 'center'
+        }}>
+          Quick Actions
+        </h3>
+        <div style={{ 
+          display: 'flex', 
+          gap: 'var(--spacing-md)', 
+          flexWrap: 'wrap',
+          justifyContent: 'center'
+        }}>
+          <Link to="/admin/companies" style={{ textDecoration: 'none' }}>
+            <Button variant="primary" size="lg">
+              Manage Companies
+            </Button>
+          </Link>
+          <Link to="/admin/users" style={{ textDecoration: 'none' }}>
+            <Button variant="secondary" size="lg">
+              Manage Users
+            </Button>
+          </Link>
+          <Link to="/admin/appointments" style={{ textDecoration: 'none' }}>
+            <Button variant="accent" size="lg">
+              View Appointments
+            </Button>
+          </Link>
+          <Link to="/admin/billing" style={{ textDecoration: 'none' }}>
+            <Button variant="success" size="lg">
+              Billing & Payments
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

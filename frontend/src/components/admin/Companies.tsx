@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import Button from '../shared/Button'
+import { StatusBadge } from '../shared'
 
 interface Company {
   id: number
@@ -96,24 +98,25 @@ const Companies: React.FC = () => {
   }
 
   const getStatusBadge = (status: string) => {
-    const statusColors = {
-      pending: '#ffc107',
-      active: '#28a745',
-      suspended: '#dc3545'
+    const companyStatusConfig = {
+      pending: {
+        label: 'PENDING',
+        backgroundColor: '#ffc107',
+        textColor: '#ffffff'
+      },
+      active: {
+        label: 'ACTIVE',
+        backgroundColor: '#28a745',
+        textColor: '#ffffff'
+      },
+      suspended: {
+        label: 'SUSPENDED',
+        backgroundColor: '#dc3545',
+        textColor: '#ffffff'
+      }
     }
     
-    return (
-      <span style={{
-        backgroundColor: statusColors[status as keyof typeof statusColors],
-        color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: 'bold'
-      }}>
-        {status.toUpperCase()}
-      </span>
-    )
+    return <StatusBadge status={status} statusConfig={companyStatusConfig} size="sm" />
   }
 
   if (loading) {
@@ -125,80 +128,171 @@ const Companies: React.FC = () => {
       <h1>Manage Companies</h1>
       
       {error && (
-        <div style={{ color: 'red', marginBottom: '20px', padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>
+        <div style={{ 
+          color: 'var(--color-status-error)', 
+          marginBottom: '20px', 
+          padding: '10px', 
+          backgroundColor: 'var(--color-background-secondary)', 
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--color-status-error)'
+        }}>
           {error}
         </div>
       )}
 
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2>All Companies ({companies.length})</h2>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '20px',
+          padding: 'var(--spacing-lg)',
+          backgroundColor: 'var(--color-background-card)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border-primary)',
+          boxShadow: 'var(--color-shadow-md)'
+        }}>
+          <h2 style={{ 
+            margin: 0, 
+            color: 'var(--color-text-primary)',
+            fontSize: 'var(--font-fontSize-xl)',
+            fontWeight: 'var(--font-fontWeight-semibold)'
+          }}>
+            All Companies ({companies.length})
+          </h2>
         </div>
 
         {companies.length === 0 ? (
           <p>No companies found.</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ 
+              width: '100%', 
+              borderCollapse: 'collapse',
+              backgroundColor: 'var(--color-background-card)',
+              borderRadius: 'var(--radius-lg)',
+              overflow: 'hidden'
+            }}>
               <thead>
-                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Company</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Contact</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Phone</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Email</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Status</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Actions</th>
+                <tr style={{ backgroundColor: 'var(--color-background-secondary)' }}>
+                  <th style={{ 
+                    padding: 'var(--spacing-md)', 
+                    textAlign: 'left', 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    fontWeight: 'var(--font-fontWeight-semibold)',
+                    fontSize: 'var(--font-fontSize-sm)'
+                  }}>Company</th>
+                  <th style={{ 
+                    padding: 'var(--spacing-md)', 
+                    textAlign: 'left', 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    fontWeight: 'var(--font-fontWeight-semibold)',
+                    fontSize: 'var(--font-fontSize-sm)'
+                  }}>Contact</th>
+                  <th style={{ 
+                    padding: 'var(--spacing-md)', 
+                    textAlign: 'left', 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    fontWeight: 'var(--font-fontWeight-semibold)',
+                    fontSize: 'var(--font-fontSize-sm)'
+                  }}>Phone</th>
+                  <th style={{ 
+                    padding: 'var(--spacing-md)', 
+                    textAlign: 'left', 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    fontWeight: 'var(--font-fontWeight-semibold)',
+                    fontSize: 'var(--font-fontSize-sm)'
+                  }}>Email</th>
+                  <th style={{ 
+                    padding: 'var(--spacing-md)', 
+                    textAlign: 'left', 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    fontWeight: 'var(--font-fontWeight-semibold)',
+                    fontSize: 'var(--font-fontSize-sm)'
+                  }}>Status</th>
+                  <th style={{ 
+                    padding: 'var(--spacing-md)', 
+                    textAlign: 'left', 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    color: 'var(--color-text-primary)',
+                    fontWeight: 'var(--font-fontWeight-semibold)',
+                    fontSize: 'var(--font-fontSize-sm)'
+                  }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {companies.map((company) => (
-                  <tr key={company.id} style={{ borderBottom: '1px solid #dee2e6' }}>
-                    <td style={{ padding: '12px' }}>
+                  <tr key={company.id} style={{ 
+                    borderBottom: '1px solid var(--color-border-primary)',
+                    transition: 'background-color 0.2s ease'
+                  }}>
+                    <td style={{ 
+                      padding: 'var(--spacing-md)',
+                      color: 'var(--color-text-primary)'
+                    }}>
                       <div>
-                        <strong>{company.name}</strong>
-                        <div style={{ fontSize: '12px', color: '#666' }}>{company.address}</div>
+                        <strong style={{ color: 'var(--color-text-primary)' }}>{company.name}</strong>
+                        <div style={{ 
+                          fontSize: 'var(--font-fontSize-sm)', 
+                          color: 'var(--color-text-secondary)',
+                          marginTop: 'var(--spacing-xs)'
+                        }}>{company.address}</div>
                       </div>
                     </td>
-                    <td style={{ padding: '12px' }}>{company.contact}</td>
-                    <td style={{ padding: '12px' }}>{company.phone}</td>
-                    <td style={{ padding: '12px' }}>{company.email}</td>
-                    <td style={{ padding: '12px' }}>{getStatusBadge(company.status)}</td>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ display: 'flex', gap: '5px' }}>
+                    <td style={{ 
+                      padding: 'var(--spacing-md)',
+                      color: 'var(--color-text-primary)'
+                    }}>{company.contact}</td>
+                    <td style={{ 
+                      padding: 'var(--spacing-md)',
+                      color: 'var(--color-text-primary)'
+                    }}>{company.phone}</td>
+                    <td style={{ 
+                      padding: 'var(--spacing-md)',
+                      color: 'var(--color-text-primary)'
+                    }}>{company.email}</td>
+                    <td style={{ padding: 'var(--spacing-md)' }}>{getStatusBadge(company.status)}</td>
+                    <td style={{ padding: 'var(--spacing-md)' }}>
+                      <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
                         {company.status === 'pending' && (
-                          <button
+                          <Button
+                            variant="success"
+                            size="sm"
                             onClick={() => updateCompanyStatus(company.id, 'active')}
-                            className="btn"
-                            style={{ backgroundColor: '#28a745', fontSize: '12px', padding: '4px 8px' }}
                           >
                             Approve
-                          </button>
+                          </Button>
                         )}
                         {company.status === 'active' && (
-                          <button
+                          <Button
+                            variant="warning"
+                            size="sm"
                             onClick={() => updateCompanyStatus(company.id, 'suspended')}
-                            className="btn"
-                            style={{ backgroundColor: '#ffc107', fontSize: '12px', padding: '4px 8px' }}
                           >
                             Suspend
-                          </button>
+                          </Button>
                         )}
                         {company.status === 'suspended' && (
-                          <button
+                          <Button
+                            variant="success"
+                            size="sm"
                             onClick={() => updateCompanyStatus(company.id, 'active')}
-                            className="btn"
-                            style={{ backgroundColor: '#28a745', fontSize: '12px', padding: '4px 8px' }}
                           >
                             Activate
-                          </button>
+                          </Button>
                         )}
-                        <button
+                        <Button
+                          variant="danger"
+                          size="sm"
                           onClick={() => deleteCompany(company.id)}
-                          className="btn"
-                          style={{ backgroundColor: '#dc3545', fontSize: '12px', padding: '4px 8px' }}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

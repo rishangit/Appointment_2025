@@ -27,6 +27,10 @@ router.put('/appointments/:id/status', companyController.validateUpdateAppointme
 // Company users (users who made appointments)
 router.get('/users', companyController.getCompanyUsers);
 
+// Billing management
+router.get('/billing', companyController.getBilling);
+router.post('/billing/pay', companyController.validatePayment, companyController.processPayment);
+
 // Subscription management
 router.get('/subscriptions', companyController.getSubscriptions);
 

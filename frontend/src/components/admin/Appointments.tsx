@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import Button from '../shared/Button'
+import { AppointmentStatusBadge } from '../shared'
 
 interface Appointment {
   id: number
@@ -12,7 +14,7 @@ interface Appointment {
   appointment_date: string
   appointment_time: string
   notes: string
-  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
+  status: 'pending' | 'scheduled' | 'completed' | 'cancelled'
   created_at: string
 }
 
@@ -206,25 +208,7 @@ const Appointments: React.FC = () => {
   }
 
   const getStatusBadge = (status: string) => {
-    const statusColors = {
-      scheduled: '#ffc107',
-      confirmed: '#007bff',
-      completed: '#28a745',
-      cancelled: '#dc3545'
-    }
-    
-    return (
-      <span style={{
-        backgroundColor: statusColors[status as keyof typeof statusColors],
-        color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: 'bold'
-      }}>
-        {status.toUpperCase()}
-      </span>
-    )
+    return <AppointmentStatusBadge status={status as any} size="sm" />
   }
 
   const formatDate = (dateString: string) => {
@@ -254,7 +238,14 @@ const Appointments: React.FC = () => {
       </div>
       
       {error && (
-        <div className="alert alert-error">
+        <div style={{
+          color: 'var(--color-status-error)',
+          marginBottom: '20px',
+          padding: 'var(--spacing-md)',
+          backgroundColor: 'var(--color-background-secondary)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--color-status-error)'
+        }}>
           {error}
         </div>
       )}
@@ -313,19 +304,19 @@ const Appointments: React.FC = () => {
               >
                 <option value="">All Statuses</option>
                 <option value="scheduled">Scheduled</option>
-                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
                 <option value="completed">Completed</option>
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
 
             <div className="filter-actions">
-              <button className="btn btn-primary" onClick={handleFilter}>
+              <Button variant="primary" onClick={handleFilter}>
                 Apply Filter
-              </button>
-              <button className="btn btn-secondary" onClick={handleClearFilter}>
+              </Button>
+              <Button variant="secondary" onClick={handleClearFilter}>
                 Clear Filter
-              </button>
+              </Button>
             </div>
           </div>
         </div>

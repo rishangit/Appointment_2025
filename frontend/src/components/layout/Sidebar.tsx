@@ -1,12 +1,30 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { User, UserRole } from '../../types'
+import { getRoleDisplayName } from '../../utils/userRoleUtils'
+import { 
+  DashboardIcon, 
+  AppointmentsIcon, 
+  ServicesIcon, 
+  UsersIcon, 
+  BillingIcon,
+  BuildingIcon,
+  XIcon,
+  LogoutIcon,
+  ShowcaseIcon
+} from '../shared/icons'
 
 interface SidebarProps {
   user: User
   onLogout: () => void
   isOpen: boolean
   onToggle: () => void
+}
+
+interface NavLink {
+  to: string
+  label: string
+  icon: React.ReactNode
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) => {
@@ -16,29 +34,30 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) =
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
-  const getNavLinks = () => {
+  const getNavLinks = (): NavLink[] => {
     switch (user.role) {
       case UserRole.ADMIN:
         return [
-          { to: '/admin', label: 'Dashboard', icon: '📊' },
-          { to: '/admin/companies', label: 'Companies', icon: '🏢' },
-          { to: '/admin/users', label: 'Users', icon: '👥' },
-          { to: '/admin/appointments', label: 'Appointments', icon: '📅' },
-          { to: '/admin/billing', label: 'Billing', icon: '💰' }
+          { to: '/admin', label: 'Dashboard', icon: <DashboardIcon size={20} /> },
+          { to: '/admin/companies', label: 'Companies', icon: <BuildingIcon size={20} /> },
+          { to: '/admin/users', label: 'Users', icon: <UsersIcon size={20} /> },
+          { to: '/admin/appointments', label: 'Appointments', icon: <AppointmentsIcon size={20} /> },
+          { to: '/admin/billing', label: 'Billing', icon: <BillingIcon size={20} /> }
         ]
       case UserRole.COMPANY:
         return [
-          { to: '/company', label: 'Dashboard', icon: '📊' },
-          { to: '/company/appointments', label: 'Appointments', icon: '📅' },
-          { to: '/company/services', label: 'Services', icon: '🔧' },
-          { to: '/company/users', label: 'Users', icon: '👥' }
+          { to: '/company', label: 'Dashboard', icon: <DashboardIcon size={20} /> },
+          { to: '/company/appointments', label: 'Appointments', icon: <AppointmentsIcon size={20} /> },
+          { to: '/company/services', label: 'Services', icon: <ServicesIcon size={20} /> },
+          { to: '/company/users', label: 'Users', icon: <UsersIcon size={20} /> },
+          { to: '/company/billing', label: 'Billing', icon: <BillingIcon size={20} /> }
         ]
-              case UserRole.USER:
-          return [
-            { to: '/user', label: 'Dashboard', icon: '📊' },
-            { to: '/user/my-appointments', label: 'My Appointments', icon: '📅' },
-            { to: '/user/companies', label: 'Companies', icon: '🏢' }
-          ]
+      case UserRole.USER:
+        return [
+          { to: '/user', label: 'Dashboard', icon: <DashboardIcon size={20} /> },
+          { to: '/user/my-appointments', label: 'My Appointments', icon: <AppointmentsIcon size={20} /> },
+          { to: '/user/companies', label: 'Companies', icon: <BuildingIcon size={20} /> }
+        ]
       default:
         return []
     }
@@ -59,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) =
         <div className="sidebar-header">
           <h2>AMS</h2>
           <button className="sidebar-close" onClick={onToggle}>
-            ✕
+            <XIcon size={20} />
           </button>
         </div>
 
@@ -71,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) =
             <Link to="/profile" className="user-name-link">
               <div className="user-name">{user.name}</div>
             </Link>
-            <div className="user-role">{user.role}</div>
+            <div className="user-role">{getRoleDisplayName(user.role)}</div>
           </div>
         </div>
 
@@ -92,11 +111,33 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) =
               <span className="sidebar-label">{link.label}</span>
             </Link>
           ))}
+          
+          {/* Separator */}
+          <div className="sidebar-separator"></div>
+          
+          {/* Component Showcase Link - Available for all users */}
+          <Link
+            to="/userscontrols"
+            className={`sidebar-link ${isActive('/userscontrols') ? 'active' : ''}`}
+            onClick={() => {
+              // Close sidebar on mobile when link is clicked
+              if (window.innerWidth <= 768) {
+                onToggle()
+              }
+            }}
+          >
+            <span className="sidebar-icon">
+              <ShowcaseIcon size={20} />
+            </span>
+            <span className="sidebar-label">Component Showcase</span>
+          </Link>
         </nav>
 
         <div className="sidebar-footer">
           <button onClick={onLogout} className="sidebar-logout">
-            <span className="sidebar-icon">🚪</span>
+            <span className="sidebar-icon">
+              <LogoutIcon size={20} />
+            </span>
             <span className="sidebar-label">Logout</span>
           </button>
         </div>

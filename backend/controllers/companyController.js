@@ -525,6 +525,105 @@ const validateCreateAppointment = [
   body('notes').optional().trim().isLength({ max: 500 }).withMessage('Notes must be less than 500 characters')
 ];
 
+const getBilling = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const company = await Company.findByUserId(userId);
+
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: 'Company profile not found'
+      });
+    }
+
+    const { month } = req.query;
+    const billingData = await Appointment.getCompanyBilling(company.id, month);
+
+    res.json({
+      success: true,
+      data: billingData
+    });
+  } catch (error) {
+    console.error('Get billing error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get billing data',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
+
+const validatePayment = [
+  body('amount')
+    .isFloat({ min: 0.01 })
+    .withMessage('Payment amount must be greater than 0'),
+  body('month')
+    .optional()
+    .isISO8601()
+    .withMessage('Invalid month format'),
+  body('paymentMethod')
+    .isIn(['credit_card', 'bank_transfer'])
+    .withMessage('Invalid payment method'),
+  body('cardDetails.number')
+    .if(body('paymentMethod').equals('credit_card'))
+    .isLength({ min: 13, max: 19 })
+    .withMessage('Invalid card number'),
+  body('cardDetails.holderName')
+    .if(body('paymentMethod').equals('credit_card'))
+    .trim()
+    .isLength({ min: 2 })
+    .withMessage('Cardholder name is required'),
+  body('cardDetails.expiryDate')
+    .if(body('paymentMethod').equals('credit_card'))
+    .matches(/^(0[1-9]|1[0-2])\/([0-9]{2})$/)
+    .withMessage('Invalid expiry date format (MM/YY)'),
+  body('cardDetails.cvv')
+    .if(body('paymentMethod').equals('credit_card'))
+    .isLength({ min: 3, max: 4 })
+    .withMessage('Invalid CVV')
+];
+
+const processPayment = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const company = await Company.findByUserId(userId);
+
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: 'Company profile not found'
+      });
+    }
+
+    // Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { amount, month, paymentMethod, cardDetails } = req.body;
+    const result = await Appointment.processCommissionPayment(company.id, amount, month, paymentMethod, cardDetails);
+
+    res.json({
+      success: true,
+      message: 'Payment processed successfully',
+      data: result
+    });
+  } catch (error) {
+    console.error('Process payment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process payment',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
+
 module.exports = {
   getDashboard,
   getProfile,
@@ -537,10 +636,13 @@ module.exports = {
   createAppointment,
   updateAppointmentStatus,
   getCompanyUsers,
+  getBilling,
+  processPayment,
   getSubscriptions,
   validateUpdateProfile,
   validateCreateService,
   validateUpdateService,
   validateCreateAppointment,
-  validateUpdateAppointmentStatus
+  validateUpdateAppointmentStatus,
+  validatePayment
 };

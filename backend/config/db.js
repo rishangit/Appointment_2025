@@ -84,7 +84,7 @@ const createTables = () => {
         appointment_date DATE NOT NULL,
         appointment_time TIME NOT NULL,
         notes TEXT,
-        status TEXT DEFAULT 'scheduled' CHECK(status IN ('scheduled', 'confirmed', 'completed', 'cancelled')),
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'scheduled', 'completed', 'cancelled')),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE,

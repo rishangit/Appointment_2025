@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { AppointmentStatusBadge } from '../shared'
+import Button from '../shared/Button'
 
 interface Appointment {
   id: number
@@ -8,7 +10,7 @@ interface Appointment {
   appointment_date: string
   appointment_time: string
   notes: string
-  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
+  status: 'pending' | 'scheduled' | 'completed' | 'cancelled'
   created_at: string
 }
 
@@ -273,7 +275,6 @@ const MyAppointments: React.FC = () => {
         setMessageType('error')
       }
     } catch (error: any) {
-      console.error('Failed to book appointment:', error)
       setMessage('Network error. Please try again.')
       setMessageType('error')
     }
@@ -308,25 +309,7 @@ const MyAppointments: React.FC = () => {
   }
 
   const getStatusBadge = (status: string) => {
-    const statusColors = {
-      scheduled: '#ffc107',
-      confirmed: '#007bff',
-      completed: '#28a745',
-      cancelled: '#dc3545'
-    }
-    
-    return (
-      <span style={{
-        backgroundColor: statusColors[status as keyof typeof statusColors],
-        color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: 'bold'
-      }}>
-        {status.toUpperCase()}
-      </span>
-    )
+    return <AppointmentStatusBadge status={status as any} size="sm" />
   }
 
   const formatDate = (dateString: string) => {
@@ -338,7 +321,7 @@ const MyAppointments: React.FC = () => {
   }
 
   const canCancel = (status: string) => {
-    return status === 'scheduled' || status === 'confirmed'
+    return status === 'pending' || status === 'scheduled'
   }
 
   if (loading) {
@@ -364,12 +347,12 @@ const MyAppointments: React.FC = () => {
       <div className="card">
         <div className="card-header">
           <h2>All Appointments ({appointments.length})</h2>
-          <button 
-            className="btn btn-primary"
+          <Button 
+            variant="primary"
             onClick={() => setShowCreateForm(!showCreateForm)}
           >
             {showCreateForm ? 'Cancel' : 'Create Appointment'}
-          </button>
+          </Button>
         </div>
 
         {/* Create Appointment Form */}
@@ -443,12 +426,12 @@ const MyAppointments: React.FC = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="btn btn-primary">
+                <Button type="submit" variant="primary">
                   Book Appointment
-                </button>
-                <button 
+                </Button>
+                <Button 
                   type="button" 
-                  className="btn btn-secondary"
+                  variant="secondary"
                   onClick={() => {
                     setShowCreateForm(false)
                     setFormData({
@@ -462,7 +445,7 @@ const MyAppointments: React.FC = () => {
                   }}
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -498,13 +481,13 @@ const MyAppointments: React.FC = () => {
                     <td style={{ padding: '12px' }}>{getStatusBadge(appointment.status)}</td>
                     <td style={{ padding: '12px' }}>
                       {canCancel(appointment.status) && (
-                        <button
+                        <Button
                           onClick={() => cancelAppointment(appointment.id)}
-                          className="btn"
-                          style={{ backgroundColor: '#dc3545', fontSize: '12px', padding: '4px 8px' }}
+                          variant="danger"
+                          size="sm"
                         >
                           Cancel
-                        </button>
+                        </Button>
                       )}
                     </td>
                   </tr>

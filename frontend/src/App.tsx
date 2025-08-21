@@ -4,6 +4,8 @@ import { useAppSelector, useAppDispatch } from './store/hooks'
 import type { RootState } from './store'
 import { checkAuthStatus, logout } from './store/slices/authSlice'
 import { UserRole } from './types'
+import { isAdmin, isCompany, isUser } from './utils/userRoleUtils'
+import { ThemeProvider } from './theme/ThemeProvider'
 
 // Auth components
 import Login from './components/auth/Login'
@@ -28,6 +30,7 @@ import AdminAppointments from './components/admin/Appointments'
 import Appointments from './components/company/Appointments'
 import Services from './components/company/Services'
 import CompanyUsers from './components/company/CompanyUsers'
+import CompanyBilling from './components/company/Billing'
 
 // User components
 import MyAppointments from './components/user/MyAppointments'
@@ -36,6 +39,11 @@ import UserCompanies from './components/user/Companies'
 
 // Profile component
 import Profile from './components/profile/Profile'
+
+// Component Showcase
+import ComponentShowcase from './components/userscontrols/ComponentShowcase'
+import { ThemeShowcase } from './components/shared/ThemeShowcase'
+import { IconShowcase } from './components/shared'
 
 function AppContent() {
   const dispatch = useAppDispatch()
@@ -85,7 +93,7 @@ function AppContent() {
             !isAuthenticated ? <Register /> : <Navigate to="/" />
           } />
           <Route path="/admin/*" element={
-            isAuthenticated && user?.role === UserRole.ADMIN ? (
+            isAuthenticated && user && isAdmin(user.role) ? (
               <Routes>
                 <Route path="/" element={<AdminDashboard />} />
                 <Route path="/companies" element={<Companies />} />
@@ -96,17 +104,18 @@ function AppContent() {
             ) : <Navigate to="/login" />
           } />
           <Route path="/company/*" element={
-            isAuthenticated && user?.role === UserRole.COMPANY ? (
+            isAuthenticated && user && isCompany(user.role) ? (
               <Routes>
                 <Route path="/" element={<CompanyDashboard />} />
                 <Route path="/appointments" element={<Appointments />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/users" element={<CompanyUsers />} />
+                <Route path="/billing" element={<CompanyBilling />} />
               </Routes>
             ) : <Navigate to="/login" />
           } />
           <Route path="/user/*" element={
-            isAuthenticated && user?.role === UserRole.USER ? (
+            isAuthenticated && user && isUser(user.role) ? (
               <Routes>
                 <Route path="/" element={<UserDashboard />} />
                 <Route path="/my-appointments" element={<MyAppointments />} />
@@ -115,12 +124,18 @@ function AppContent() {
               </Routes>
             ) : <Navigate to="/login" />
           } />
-          
-          {/* Global profile route for all authenticated users */}
           <Route path="/profile" element={
             isAuthenticated ? <Profile /> : <Navigate to="/login" />
           } />
-          
+          <Route path="/userscontrols" element={
+            isAuthenticated ? <ComponentShowcase /> : <Navigate to="/login" />
+          } />
+          <Route path="/theme-showcase" element={
+            isAuthenticated ? <ThemeShowcase /> : <Navigate to="/login" />
+          } />
+          <Route path="/icon-showcase" element={
+            isAuthenticated ? <IconShowcase /> : <Navigate to="/login" />
+          } />
           <Route path="/" element={
             isAuthenticated && user ? (
               user.role === UserRole.ADMIN ? <Navigate to="/admin" /> :
@@ -136,9 +151,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
   )
 }
 

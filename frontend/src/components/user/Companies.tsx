@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAppSelector } from '../../store/hooks'
+import Button from '../shared/Button'
 
 interface Company {
   id: number
@@ -41,7 +42,6 @@ const Companies: React.FC = () => {
         setError(data.message || 'Failed to fetch companies')
       }
     } catch (error) {
-      console.error('Failed to fetch companies:', error)
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
@@ -105,8 +105,10 @@ const Companies: React.FC = () => {
             <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
               You haven't made any appointments yet.
             </p>
-            <a href="/user/book-appointment" className="btn btn-primary">
-              Book Your First Appointment
+            <a href="/user/book-appointment">
+              <Button variant="primary">
+                Book Your First Appointment
+              </Button>
             </a>
           </div>
         ) : (
@@ -148,11 +150,15 @@ const Companies: React.FC = () => {
                 </div>
                 
                 <div className="company-actions">
-                  <a href={`/user/book-appointment?company=${company.id}`} className="btn btn-primary">
-                    Book Again
+                  <a href={`/user/book-appointment?company=${company.id}`}>
+                    <Button variant="primary">
+                      Book Again
+                    </Button>
                   </a>
-                  <a href={`/user/my-appointments?company=${company.id}`} className="btn btn-secondary">
-                    View Appointments
+                  <a href={`/user/my-appointments?company=${company.id}`}>
+                    <Button variant="secondary">
+                      View Appointments
+                    </Button>
                   </a>
                 </div>
               </div>

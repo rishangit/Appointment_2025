@@ -4,6 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import type { RootState } from '../../store'
 import { loginUser, clearError } from '../../store/slices/authSlice'
 import { UserRole } from '../../types'
+import { Button, Input, Alert } from '../shared'
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
@@ -68,68 +69,48 @@ const Login: React.FC = () => {
         </div>
 
         {error && (
-          <div className="alert alert-error">
-            <span className="alert-icon">⚠️</span>
-            {error}
-          </div>
+          <Alert type="error" message={error} />
         )}
 
         {success && (
-          <div className="alert alert-success">
-            <span className="alert-icon">✅</span>
-            {success}
-          </div>
+          <Alert type="success" message={success} />
         )}
 
         <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <div className="input-wrapper">
-              <span className="input-icon">📧</span>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                required
-                className="form-input"
-              />
-            </div>
-          </div>
+          <Input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            label="Email Address"
+            required
+            icon="📧"
+            autoComplete="email"
+          />
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <div className="input-wrapper">
-              <span className="input-icon">🔒</span>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                required
-                className="form-input"
-              />
-            </div>
-          </div>
+          <Input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            label="Password"
+            required
+            icon="🔒"
+            autoComplete="current-password"
+          />
 
-          <button 
+          <Button 
             type="submit" 
-            className="login-button" 
-            disabled={loading}
+            variant="primary"
+            size="lg"
+            loading={loading}
+            fullWidth
+            className="login-button"
           >
-            {loading ? (
-              <>
-                <span className="loading-spinner"></span>
-                Signing In...
-              </>
-            ) : (
-              'Sign In'
-            )}
-          </button>
+            {loading ? 'Signing In...' : 'Sign In'}
+          </Button>
         </form>
 
         <div className="login-footer">

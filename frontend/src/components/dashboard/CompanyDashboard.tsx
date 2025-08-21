@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import { DashboardStats } from '../../types'
 import { companyAPI } from '../../utils/api'
+import { Button } from '../shared'
 
 const CompanyDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -27,7 +28,7 @@ const CompanyDashboard: React.FC = () => {
         })
       }
     } catch (error) {
-      console.error('Error fetching stats:', error)
+      // Handle error silently
     }
   }
 
@@ -57,9 +58,15 @@ const CompanyDashboard: React.FC = () => {
       <div className="card">
         <h3>Quick Actions</h3>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <Link to="/company/profile" className="btn">Company Profile</Link>
-          <Link to="/company/services" className="btn">Manage Services</Link>
-          <Link to="/company/appointments" className="btn">View Appointments</Link>
+          <Link to="/company/profile">
+            <Button variant="primary">Company Profile</Button>
+          </Link>
+          <Link to="/company/services">
+            <Button variant="primary">Manage Services</Button>
+          </Link>
+          <Link to="/company/appointments">
+            <Button variant="primary">View Appointments</Button>
+          </Link>
         </div>
       </div>
     </div>

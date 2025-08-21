@@ -13,6 +13,13 @@ export enum UserRole {
   USER = 'user'
 }
 
+export enum AppointmentStatus {
+  PENDING = 'pending',
+  SCHEDULED = 'scheduled',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled'
+}
+
 export interface Company {
   id: number
   name: string
@@ -43,7 +50,7 @@ export interface Appointment {
   serviceId: number
   appointmentDate: string
   appointmentTime: string
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  status: AppointmentStatus
   notes?: string
   createdAt: string
   updatedAt: string

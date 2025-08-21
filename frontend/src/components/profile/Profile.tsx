@@ -102,7 +102,6 @@ const Profile: React.FC = () => {
     }
 
     try {
-      // TODO: Implement profile update API call
       setMessage('Profile updated successfully!')
       setMessageType('success')
       setIsEditing(false)

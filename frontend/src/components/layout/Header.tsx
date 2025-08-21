@@ -1,4 +1,5 @@
 import React from 'react'
+import { ThemeSwitcher } from '../shared/ThemeSwitcher'
 
 interface HeaderProps {
   onToggleSidebar: () => void
@@ -17,6 +18,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) => {
         
         <div className="header-title">
           <h1>Appointment Management System</h1>
+        </div>
+        
+        <div className="header-actions">
+          <ThemeSwitcher variant="dropdown" />
         </div>
       </div>
     </header>

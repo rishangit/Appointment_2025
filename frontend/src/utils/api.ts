@@ -43,10 +43,9 @@ const apiRequest = async <T>(
     }
     
     return data
-  } catch (error) {
-    console.error('API request error:', error)
-    throw error
-  }
+      } catch (error) {
+      throw error
+    }
 }
 
 // Auth API functions
