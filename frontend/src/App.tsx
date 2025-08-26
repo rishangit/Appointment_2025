@@ -25,17 +25,22 @@ import Companies from './components/admin/Companies'
 import Users from './components/admin/Users'
 import Billing from './components/admin/Billing'
 import AdminAppointments from './components/admin/Appointments'
+import AdminSettings from './components/admin/Settings'
 
 // Company components
 import Appointments from './components/company/Appointments'
+import Calendar from './components/company/Calendar'
 import Services from './components/company/Services'
 import CompanyUsers from './components/company/CompanyUsers'
 import CompanyBilling from './components/company/Billing'
+import CompanySettings from './components/company/Settings'
 
 // User components
 import MyAppointments from './components/user/MyAppointments'
+import UserCalendar from './components/user/Calendar'
 import BookAppointment from './components/user/BookAppointment'
 import UserCompanies from './components/user/Companies'
+import UserSettings from './components/user/Settings'
 
 // Profile component
 import Profile from './components/profile/Profile'
@@ -100,6 +105,7 @@ function AppContent() {
                 <Route path="/users" element={<Users />} />
                 <Route path="/appointments" element={<AdminAppointments />} />
                 <Route path="/billing" element={<Billing />} />
+                <Route path="/settings" element={<AdminSettings />} />
               </Routes>
             ) : <Navigate to="/login" />
           } />
@@ -108,9 +114,11 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<CompanyDashboard />} />
                 <Route path="/appointments" element={<Appointments />} />
+                <Route path="/calendar" element={<Calendar />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/users" element={<CompanyUsers />} />
                 <Route path="/billing" element={<CompanyBilling />} />
+                <Route path="/settings" element={<CompanySettings />} />
               </Routes>
             ) : <Navigate to="/login" />
           } />
@@ -119,8 +127,10 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<UserDashboard />} />
                 <Route path="/my-appointments" element={<MyAppointments />} />
+                <Route path="/calendar" element={<UserCalendar />} />
                 <Route path="/book-appointment" element={<BookAppointment />} />
                 <Route path="/companies" element={<UserCompanies />} />
+                <Route path="/settings" element={<UserSettings />} />
               </Routes>
             ) : <Navigate to="/login" />
           } />

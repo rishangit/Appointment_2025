@@ -23,4 +23,7 @@ router.get('/appointments/history', userController.getAppointmentHistory);
 router.post('/appointments', userController.createAppointment);
 router.put('/appointments/:id/cancel', userController.cancelAppointment);
 
+// User settings
+router.put('/theme', userController.updateTheme);
+
 module.exports = router;

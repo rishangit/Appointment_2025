@@ -5,7 +5,6 @@ export const ravenClawTheme = {
     primary: '#1d2d5c',      // Deep navy blue
     secondary: '#8cc0c0',    // Teal
     accent: '#987046',       // Warm brown
-    background: '#ffffff',   // White
     surface: '#f8f9fa',      // Light gray
     
     // Semantic colors derived from the palette

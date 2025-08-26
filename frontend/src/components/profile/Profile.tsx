@@ -3,6 +3,8 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import type { RootState } from '../../store'
 import { UserRole, Company } from '../../types'
 import { companyAPI } from '../../utils/api'
+import { Input } from '../shared'
+import { PasswordIcon } from '../shared/icons'
 
 
 
@@ -230,41 +232,35 @@ const Profile: React.FC = () => {
                 <h3>Change Password</h3>
                 <p className="text-muted">Leave blank if you don't want to change your password</p>
                 
-                <div className="form-group">
-                  <label htmlFor="currentPassword">Current Password</label>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    name="currentPassword"
-                    value={formData.currentPassword}
-                    onChange={handleChange}
-                    placeholder="Enter current password"
-                  />
-                </div>
+                <Input
+                  type="password"
+                  name="currentPassword"
+                  value={formData.currentPassword}
+                  onChange={handleChange}
+                  placeholder="Enter current password"
+                  label="Current Password"
+                  icon={<PasswordIcon size={20} />}
+                />
 
-                <div className="form-group">
-                  <label htmlFor="newPassword">New Password</label>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    value={formData.newPassword}
-                    onChange={handleChange}
-                    placeholder="Enter new password"
-                  />
-                </div>
+                <Input
+                  type="password"
+                  name="newPassword"
+                  value={formData.newPassword}
+                  onChange={handleChange}
+                  placeholder="Enter new password"
+                  label="New Password"
+                  icon={<PasswordIcon size={20} />}
+                />
 
-                <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm New Password</label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="Confirm new password"
-                  />
-                </div>
+                <Input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm new password"
+                  label="Confirm New Password"
+                  icon={<PasswordIcon size={20} />}
+                />
               </div>
             )}
 

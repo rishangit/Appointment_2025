@@ -5,7 +5,6 @@ export const modernDarkTheme = {
     primary: '#6366f1',      // Indigo
     secondary: '#8b5cf6',    // Violet
     accent: '#06b6d4',       // Cyan
-    background: '#0f172a',   // Slate 900
     surface: '#1e293b',      // Slate 800
     
     // Semantic colors

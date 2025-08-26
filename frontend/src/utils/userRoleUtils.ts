@@ -74,8 +74,8 @@ export const getDefaultRoute = (role: UserRole): string => {
  */
 export const getAvailableRoles = (): Array<{ value: UserRole; label: string }> => {
   return [
-    { value: UserRole.USER, label: 'User' },
-    { value: UserRole.COMPANY, label: 'Company' }
+    { value: UserRole.USER, label: 'Individual User - Book appointments with companies' },
+    { value: UserRole.COMPANY, label: 'Company Owner - Manage services and appointments' }
   ]
 }
 

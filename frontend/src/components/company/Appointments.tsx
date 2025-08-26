@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useAppSelector } from '../../store/hooks'
+import { useNavigate } from 'react-router-dom'
 import { companyAPI } from '../../utils/api'
 import { AppointmentStatusBadge, Button } from '../shared'
 
@@ -130,6 +131,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
 const Appointments: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth)
+  const navigate = useNavigate()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [services, setServices] = useState<Service[]>([])
   const [companyUsers, setCompanyUsers] = useState<CompanyUser[]>([])
@@ -378,6 +380,12 @@ const Appointments: React.FC = () => {
               >
                 <span className="filter-icon">🔍</span>
                 Filters {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/company/calendar')}
+              >
+                📅 Calendar View
               </Button>
               <Button 
                 variant="primary"

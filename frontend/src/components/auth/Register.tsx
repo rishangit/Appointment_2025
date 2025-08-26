@@ -5,6 +5,7 @@ import type { RootState } from '../../store'
 import { registerUser, clearError } from '../../store/slices/authSlice'
 import { UserRole } from '../../types'
 import { Button, Input, Select, Alert, Card } from '../shared'
+import { PasswordIcon, UserIcon, EmailIcon, BuildingIcon, LocationIcon, PhoneIcon, SelectArrowIcon } from '../shared/icons'
 import { getAvailableRoles } from '../../utils/userRoleUtils'
 
 const Register: React.FC = () => {
@@ -106,7 +107,7 @@ const Register: React.FC = () => {
             placeholder="Enter your full name"
             label="Full Name"
             required
-            icon="👤"
+            icon={<UserIcon size={20} />}
             autoComplete="name"
           />
 
@@ -118,7 +119,7 @@ const Register: React.FC = () => {
             placeholder="Enter your email"
             label="Email Address"
             required
-            icon="📧"
+            icon={<EmailIcon size={20} />}
             autoComplete="email"
           />
 
@@ -130,7 +131,7 @@ const Register: React.FC = () => {
             placeholder="Create a password"
             label="Password"
             required
-            icon="🔒"
+            icon={<PasswordIcon size={20} />}
             autoComplete="new-password"
           />
 
@@ -142,6 +143,8 @@ const Register: React.FC = () => {
             label="Account Type"
             required
             placeholder="Select account type"
+            icon={<SelectArrowIcon size={16} />}
+            searchable={true}
           />
 
           {formData.role === UserRole.COMPANY && (
@@ -154,7 +157,7 @@ const Register: React.FC = () => {
                 placeholder="Enter company name"
                 label="Company Name"
                 required
-                icon="🏢"
+                icon={<BuildingIcon size={20} />}
               />
 
               <Input
@@ -165,7 +168,7 @@ const Register: React.FC = () => {
                 placeholder="Enter company address"
                 label="Company Address"
                 required
-                icon="📍"
+                icon={<LocationIcon size={20} />}
               />
 
               <Input
@@ -176,7 +179,7 @@ const Register: React.FC = () => {
                 placeholder="Enter company phone"
                 label="Company Phone"
                 required
-                icon="📞"
+                icon={<PhoneIcon size={20} />}
               />
             </>
           )}

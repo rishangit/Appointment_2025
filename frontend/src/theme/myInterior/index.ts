@@ -5,7 +5,6 @@ export const myInteriorTheme = {
     primary: '#1e2a44',      // Dark blue-gray
     secondary: '#9bb8c6',    // Light blue-gray
     accent: '#d6c6b8',       // Warm beige
-    background: '#fffdf9',   // Off-white
     surface: '#a8a3a0',      // Gray
     
     // Semantic colors derived from the palette

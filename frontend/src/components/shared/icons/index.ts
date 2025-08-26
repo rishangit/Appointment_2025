@@ -16,6 +16,12 @@ export { default as UsersIcon } from './UsersIcon'
 export { default as BillingIcon } from './BillingIcon'
 export { default as LogoutIcon } from './LogoutIcon'
 export { default as ShowcaseIcon } from './ShowcaseIcon'
+export { default as EmailIcon } from './EmailIcon'
+export { default as PasswordIcon } from './PasswordIcon'
+export { default as LocationIcon } from './LocationIcon'
+export { default as PhoneIcon } from './PhoneIcon'
+export { default as SelectArrowIcon } from './SelectArrowIcon'
+export { default as SettingsIcon } from './SettingsIcon'
 
 // Icon Types
 export interface IconProps {

@@ -236,4 +236,11 @@ export const userAPI = {
       method: 'PUT',
     })
   },
+
+  updateTheme: async (theme: string): Promise<ApiResponse<any>> => {
+    return apiRequest<any>('/user/theme', {
+      method: 'PUT',
+      body: JSON.stringify({ theme }),
+    })
+  },
 }

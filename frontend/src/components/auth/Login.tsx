@@ -5,6 +5,7 @@ import type { RootState } from '../../store'
 import { loginUser, clearError } from '../../store/slices/authSlice'
 import { UserRole } from '../../types'
 import { Button, Input, Alert } from '../shared'
+import { EmailIcon, PasswordIcon } from '../shared/icons'
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
@@ -85,7 +86,7 @@ const Login: React.FC = () => {
             placeholder="Enter your email"
             label="Email Address"
             required
-            icon="📧"
+            icon={<EmailIcon size={20} />}
             autoComplete="email"
           />
 
@@ -97,7 +98,7 @@ const Login: React.FC = () => {
             placeholder="Enter your password"
             label="Password"
             required
-            icon="🔒"
+            icon={<PasswordIcon size={20} />}
             autoComplete="current-password"
           />
 

@@ -46,7 +46,7 @@ class User {
     
     return new Promise((resolve, reject) => {
       db.get(
-        "SELECT id, name, email, role, created_at FROM users WHERE id = ?",
+        "SELECT id, name, email, role, theme, created_at FROM users WHERE id = ?",
         [id],
         (err, row) => {
           if (err) {
@@ -61,20 +61,39 @@ class User {
 
   static async update(id, updateData) {
     const db = getDatabase();
-    const { name, email } = updateData;
+    const { name, email, theme } = updateData;
+    
+    let query = "UPDATE users SET";
+    let params = [];
+    let updates = [];
+    
+    if (name !== undefined) {
+      updates.push(" name = ?");
+      params.push(name);
+    }
+    
+    if (email !== undefined) {
+      updates.push(" email = ?");
+      params.push(email);
+    }
+    
+    if (theme !== undefined) {
+      updates.push(" theme = ?");
+      params.push(theme);
+    }
+    
+    updates.push(" updated_at = CURRENT_TIMESTAMP");
+    query += updates.join(",") + " WHERE id = ?";
+    params.push(id);
     
     return new Promise((resolve, reject) => {
-      db.run(
-        "UPDATE users SET name = ?, email = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        [name, email, id],
-        function(err) {
-          if (err) {
-            reject(err);
-            return;
-          }
-          resolve({ changes: this.changes });
+      db.run(query, params, function(err) {
+        if (err) {
+          reject(err);
+          return;
         }
-      );
+        resolve({ changes: this.changes });
+      });
     });
   }
 

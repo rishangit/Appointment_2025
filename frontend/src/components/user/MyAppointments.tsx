@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AppointmentStatusBadge } from '../shared'
 import Button from '../shared/Button'
 
@@ -128,6 +129,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 }
 
 const MyAppointments: React.FC = () => {
+  const navigate = useNavigate()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [companies, setCompanies] = useState<Company[]>([])
   const [services, setServices] = useState<Service[]>([])
@@ -346,13 +348,25 @@ const MyAppointments: React.FC = () => {
 
       <div className="card">
         <div className="card-header">
-          <h2>All Appointments ({appointments.length})</h2>
-          <Button 
-            variant="primary"
-            onClick={() => setShowCreateForm(!showCreateForm)}
-          >
-            {showCreateForm ? 'Cancel' : 'Create Appointment'}
-          </Button>
+          <div className="header-content">
+            <div className="header-left">
+              <h2>All Appointments ({appointments.length})</h2>
+            </div>
+            <div className="header-actions">
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/user/calendar')}
+              >
+                📅 Calendar View
+              </Button>
+              <Button 
+                variant="primary"
+                onClick={() => setShowCreateForm(!showCreateForm)}
+              >
+                {showCreateForm ? 'Cancel' : 'Create Appointment'}
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Create Appointment Form */}

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { themeManager, Theme } from './ThemeManager';
+import { useAppSelector } from '../store/hooks';
+import { userAPI } from '../utils/api';
 
 export interface UseThemeReturn {
   currentTheme: Theme;
@@ -10,6 +12,7 @@ export interface UseThemeReturn {
 }
 
 export function useTheme(): UseThemeReturn {
+  const { user } = useAppSelector((state) => state.auth);
   const [currentTheme, setCurrentTheme] = useState<Theme>(themeManager.getCurrentTheme());
   const [currentThemeName, setCurrentThemeName] = useState<string>(themeManager.getCurrentThemeName());
   const [availableThemes, setAvailableThemes] = useState<string[]>(themeManager.getAvailableThemes());
@@ -34,7 +37,16 @@ export function useTheme(): UseThemeReturn {
     };
   }, []);
 
-  const setTheme = useCallback((themeName: string) => {
+  // Apply user theme when user data changes
+  useEffect(() => {
+    if (user?.theme) {
+      themeManager.setThemeFromUser(user.theme);
+      setCurrentTheme(themeManager.getCurrentTheme());
+      setCurrentThemeName(themeManager.getCurrentThemeName());
+    }
+  }, [user?.theme]);
+
+  const setTheme = useCallback(async (themeName: string) => {
     themeManager.setTheme(themeName);
     
     // Dispatch custom event to notify other components
@@ -43,7 +55,16 @@ export function useTheme(): UseThemeReturn {
     // Update state
     setCurrentTheme(themeManager.getCurrentTheme());
     setCurrentThemeName(themeManager.getCurrentThemeName());
-  }, []);
+    
+    // Save theme to backend if user is authenticated
+    if (user) {
+      try {
+        await userAPI.updateTheme(themeName);
+      } catch (error) {
+        console.error('Failed to save theme to backend:', error);
+      }
+    }
+  }, [user]);
 
   return {
     currentTheme,

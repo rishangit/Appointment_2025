@@ -11,7 +11,9 @@ import {
   BuildingIcon,
   XIcon,
   LogoutIcon,
-  ShowcaseIcon
+  ShowcaseIcon,
+  CalendarIcon,
+  SettingsIcon
 } from '../shared/icons'
 
 interface SidebarProps {
@@ -31,7 +33,18 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) =
   const location = useLocation()
 
   const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+    // Exact match
+    if (location.pathname === path) {
+      return true
+    }
+
+    // For dashboard paths, only match exact path or root path
+    if (path === '/admin' || path === '/company' || path === '/user') {
+      return location.pathname === path || location.pathname === path + '/'
+    }
+
+    // For other paths, check if it starts with the path
+    return location.pathname.startsWith(path + '/')
   }
 
   const getNavLinks = (): NavLink[] => {
@@ -42,21 +55,26 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, onToggle }) =
           { to: '/admin/companies', label: 'Companies', icon: <BuildingIcon size={20} /> },
           { to: '/admin/users', label: 'Users', icon: <UsersIcon size={20} /> },
           { to: '/admin/appointments', label: 'Appointments', icon: <AppointmentsIcon size={20} /> },
-          { to: '/admin/billing', label: 'Billing', icon: <BillingIcon size={20} /> }
+          { to: '/admin/billing', label: 'Billing', icon: <BillingIcon size={20} /> },
+          { to: '/admin/settings', label: 'Settings', icon: <SettingsIcon size={20} /> }
         ]
       case UserRole.COMPANY:
         return [
           { to: '/company', label: 'Dashboard', icon: <DashboardIcon size={20} /> },
           { to: '/company/appointments', label: 'Appointments', icon: <AppointmentsIcon size={20} /> },
+          { to: '/company/calendar', label: 'Calendar', icon: <CalendarIcon size={20} /> },
           { to: '/company/services', label: 'Services', icon: <ServicesIcon size={20} /> },
           { to: '/company/users', label: 'Users', icon: <UsersIcon size={20} /> },
-          { to: '/company/billing', label: 'Billing', icon: <BillingIcon size={20} /> }
+          { to: '/company/billing', label: 'Billing', icon: <BillingIcon size={20} /> },
+          { to: '/company/settings', label: 'Settings', icon: <SettingsIcon size={20} /> }
         ]
       case UserRole.USER:
         return [
           { to: '/user', label: 'Dashboard', icon: <DashboardIcon size={20} /> },
           { to: '/user/my-appointments', label: 'My Appointments', icon: <AppointmentsIcon size={20} /> },
-          { to: '/user/companies', label: 'Companies', icon: <BuildingIcon size={20} /> }
+          { to: '/user/calendar', label: 'Calendar', icon: <CalendarIcon size={20} /> },
+          { to: '/user/companies', label: 'Companies', icon: <BuildingIcon size={20} /> },
+          { to: '/user/settings', label: 'Settings', icon: <SettingsIcon size={20} /> }
         ]
       default:
         return []

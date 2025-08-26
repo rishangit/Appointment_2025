@@ -161,6 +161,17 @@ export class ThemeManager {
     this.applyTheme();
   }
 
+  public setThemeFromUser(userTheme: string): void {
+    if (themes[userTheme]) {
+      this.currentTheme = userTheme;
+      this.saveThemeToStorage();
+      this.applyTheme();
+    } else {
+      console.warn(`User theme "${userTheme}" not found, using default`);
+      this.setTheme('myInterior');
+    }
+  }
+
   public getAvailableThemes(): string[] {
     return Object.keys(themes);
   }

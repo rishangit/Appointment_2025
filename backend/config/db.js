@@ -41,6 +41,7 @@ const createTables = () => {
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         role TEXT CHECK(role IN ('admin', 'company', 'user')) NOT NULL,
+        theme TEXT DEFAULT 'myInterior',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`,

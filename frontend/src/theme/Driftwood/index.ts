@@ -5,7 +5,6 @@ export const driftwoodTheme = {
     primary: '#bcd4de',      // Light blue-gray
     secondary: '#a0b9bf',    // Medium blue-gray
     accent: '#949ba0',       // Dark gray
-    background: '#ffffff',   // White
     surface: '#f8fafb',      // Light gray
     
     // Semantic colors derived from the palette

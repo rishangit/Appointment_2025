@@ -134,7 +134,8 @@ const login = async (req, res) => {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
+          theme: user.theme || 'myInterior'
         },
         company: company ? {
           id: company.id,
@@ -180,6 +181,7 @@ const getProfile = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          theme: user.theme || 'myInterior',
           created_at: user.created_at
         },
         company: company ? {

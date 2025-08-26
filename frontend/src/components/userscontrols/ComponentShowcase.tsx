@@ -11,6 +11,7 @@ import {
   Modal,
   UserRoleExample
 } from '../shared'
+import { PasswordIcon, SelectArrowIcon } from '../shared/icons'
 import { UserRole } from '../../types'
 
 const ComponentShowcase: React.FC = () => {
@@ -109,6 +110,7 @@ const ComponentShowcase: React.FC = () => {
               name="password"
               placeholder="Password input"
               label="Password Input"
+              icon={<PasswordIcon size={20} />}
             />
             <Input
               type="number"
@@ -222,6 +224,16 @@ const ComponentShowcase: React.FC = () => {
               options={roleOptions}
               placeholder="Select a role"
               label="Role Selection"
+            />
+            <Select
+              name="searchable"
+              value={formData.role}
+              onChange={handleSelectChange}
+              options={roleOptions}
+              placeholder="Searchable select"
+              label="Searchable Select"
+              searchable={true}
+              icon={<SelectArrowIcon size={16} />}
             />
             <Select
               name="disabled"
@@ -503,4 +515,5 @@ const ComponentShowcase: React.FC = () => {
 }
 
 export default ComponentShowcase
+
 

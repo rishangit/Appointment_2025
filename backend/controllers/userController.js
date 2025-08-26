@@ -1,6 +1,7 @@
 const Company = require('../models/Company');
 const Service = require('../models/Service');
 const Appointment = require('../models/Appointment');
+const User = require('../models/User');
 
 const getDashboard = async (req, res) => {
   try {
@@ -365,6 +366,51 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
+const updateTheme = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { theme } = req.body;
+
+    if (!theme) {
+      return res.status(400).json({
+        success: false,
+        message: 'Theme is required'
+      });
+    }
+
+    // Validate theme value
+    const validThemes = ['myInterior', 'modernDark', 'driftwood', 'ravenClaw'];
+    if (!validThemes.includes(theme)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid theme value'
+      });
+    }
+
+    const result = await User.update(userId, { theme });
+
+    if (result.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Theme updated successfully',
+      data: { theme }
+    });
+  } catch (error) {
+    console.error('Update theme error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update theme',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
+
 module.exports = {
   getDashboard,
   getCompanies,
@@ -376,5 +422,6 @@ module.exports = {
   searchCompanies,
   getAppointmentHistory,
   createAppointment,
-  cancelAppointment
+  cancelAppointment,
+  updateTheme
 };
